@@ -68,6 +68,7 @@ void Widget::rcTcpServerNewConnection()
     connect(_rcTcpSocket, &QTcpSocket::disconnected, this, &Widget::rcTcpSocketDisconnected);
     setRcConnectionLabelConnected(true);
     _rcPingTimer.start();
+    qDebug() << "New RC connection";
 }
 
 void Widget::cduTcpServerNewConnection()
@@ -115,6 +116,7 @@ void Widget::rcTcpSocketDisconnected()
     ui->rcConnectionLabel->setStyleSheet("background-color: red");
     _rcTcpSocket->deleteLater();
     _rcTcpSocket = nullptr;
+    qDebug() << "RC disconnected!";
 }
 
 void Widget::cduTcpSocketReadyRead()
@@ -231,7 +233,8 @@ void Widget::parseRcMessages()
                 switch (static_cast<MessageId>(header.Id)) {
                 case MessageId::PingId:
                     _rcWatchdog.start();
-                    printMessageFromRc("PING");
+                    setRcConnectionLabelConnected(true);
+                    //                    printMessageFromRc("PING");
                     break;
                 case MessageId::AnswerToQuestionId: {
                     char answer = _rcMessageBuffer.at(0);
@@ -271,13 +274,16 @@ void Widget::parseCduMessages()
                 switch (static_cast<MessageId>(header.Id)) {
                 case MessageId::PingId:
                     _cduWatchdog.start();
-                    printMessageFromCdu("PING");
+                    //                    printMessageFromCdu("PING");
                     break;
                 case MessageId::BoltJointOnId:
                     printMessageFromCdu("BOLT JOINT ON");
                     break;
                 case MessageId::BoltJointOffId:
                     printMessageFromCdu("BOLT JOINT OFF");
+                    break;
+                case MessageId::RailTypeId:
+                    printMessageFromCdu("Rail Type");
                     break;
                 case MessageId::OperatorTrackCoordinateId: {
                     char km = _cduMessageBuffer.at(0);

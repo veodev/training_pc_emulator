@@ -18,7 +18,8 @@ enum class MessageId : unsigned char
     NextTrackCoordinateId = 13,
     JumpTrackCoordinateId = 14,
     ManipulatorStateId = 15,
-    PingId = 16
+    PingId = 16,
+    RailTypeId = 17
 };
 
 enum class OperatorAction : unsigned char
